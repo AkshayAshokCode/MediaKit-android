@@ -1,31 +1,33 @@
-# JitPack Setup
+# Publishing Strategy
 
-## Publishing Goal
+## Distribution Goal
 
-MediaKit will initially use JitPack for distribution.
+MediaKit is targeting Maven Central as the long-term distribution platform.
 
-## Planned Dependencies
+## Planned Artifacts
 
 ### imagepicker
 
 ```kotlin
-implementation("com.github.AkshayAshokCode.MediaKit-android:imagepicker:<version>")
+implementation("io.github.akshayashokcode:imagepicker:<version>")
 ```
 
 ### imagecropper
 
 ```kotlin
-implementation("com.github.AkshayAshokCode.MediaKit-android:imagecropper:<version>")
+implementation("io.github.akshayashokcode:imagecropper:<version>")
 ```
 
-## Publishing Flow
+## Planned Publishing Flow
 
 1. Push changes to GitHub
-2. Create Git tag
-3. JitPack builds artifacts
-4. Consumers use tagged version
+2. Create release tag
+3. Run publishing workflow
+4. Publish artifacts to Maven Central
 
-## Long-Term Direction
+## Goals
 
-Future target:
-- Maven Central publishing
+- Stable Android SDK distribution
+- Professional dependency management
+- Independent modular artifacts
+- Long-term ecosystem maintainability
