@@ -16,7 +16,7 @@
 - [ ] Stable public APIs
 - [ ] Safer bitmap handling
 - [ ] Compose support
-- [ ] Publishing automation
+- [ ] Maven Central publishing automation
 
 ### Quality
 - [ ] Sample app polish
@@ -28,4 +28,4 @@
 ## Initial Release Goal
 
 Target:
-- Internal alpha release via JitPack
+- Internal alpha release via Maven Central
