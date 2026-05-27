@@ -24,7 +24,11 @@ Modern Android media toolkit built with Kotlin.
 MediaKit-android/
 ├── ImageCropper/
 ├── imagepicker/
-└── sample-app/
+├── sample-app/
+├── docs/
+├── CHANGELOG.md
+├── CONTRIBUTING.md
+└── LICENSE
 ```
 
 ## Goals
@@ -34,6 +38,10 @@ MediaKit-android/
 - Kotlin-first APIs
 - Modern Android architecture
 - Compose-friendly future support
+
+## Vision
+
+MediaKit aims to become a reusable Android media ecosystem where developers can integrate only the media components they need.
 
 ## Publishing
 
