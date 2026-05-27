@@ -42,13 +42,16 @@ fun CropperScreen() {
                 val inflater = LayoutInflater.from(ctx)
                 val view = inflater.inflate(R.layout.cropper_view_layout, null)
                 val cropperView = view.findViewById<CropperView>(R.id.cropperView)
-                cropperViewState.value = cropperView // 🔐 Save for use in Button click
 
-                // Load a sample image
-                val bitmap = BitmapFactory.decodeResource(ctx.resources, R.drawable.image)
-             //   cropperView.post {
-                    cropperView.setImageBitmap(bitmap)
-               // }
+                cropperViewState.value = cropperView
+
+                // Load sample image into cropper.
+                val bitmap = BitmapFactory.decodeResource(
+                    ctx.resources,
+                    R.drawable.image
+                )
+
+                cropperView.setImageBitmap(bitmap)
 
                 view
             },
