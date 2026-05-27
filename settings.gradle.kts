@@ -11,6 +11,7 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
@@ -20,7 +21,9 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "MediaKit-android"
-//include(":ImageCropper", ":sample-app")
-include(":ImageCropper")
+
+include(":imagecropper")
+project(":imagecropper").projectDir = file("ImageCropper")
+
 include(":sample-app")
 include(":imagepicker")

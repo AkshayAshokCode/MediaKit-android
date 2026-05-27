@@ -4,14 +4,14 @@ Modern Android media toolkit built with Kotlin.
 
 ## Current Modules
 
-### Image Picker
+### imagepicker
 - Gallery image picking
 - Camera image capture
 - Lifecycle-aware handling
 - Error callbacks
 - Crop integration support
 
-### Image Cropper
+### imagecropper
 - Matrix-based crop engine
 - Custom crop overlay
 - Crop rectangle controls
@@ -22,7 +22,7 @@ Modern Android media toolkit built with Kotlin.
 
 ```text
 MediaKit-android/
-├── ImageCropper/
+├── imagecropper/ (mapped from existing ImageCropper directory)
 ├── imagepicker/
 ├── sample-app/
 ├── docs/
