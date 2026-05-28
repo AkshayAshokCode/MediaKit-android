@@ -3,7 +3,8 @@
 <application>
     <activity
         android:name=".CropperActivity"
-        android:exported="false"/>
+        android:exported="false"
+        android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"/>
 
     <provider
         android:name="androidx.core.content.FileProvider"

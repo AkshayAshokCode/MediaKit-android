@@ -1,20 +1,162 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="#000000"
+    android:fitsSystemWindows="true">
 
-    <com.akshayashokcode.imagecropper.CropperView
-        android:id="@+id/cropperView"
+    <!-- Top bar — height is 56dp + status bar inset applied in code -->
+    <RelativeLayout
+        android:id="@+id/topBar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="#1A1A1A"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp">
+
+        <ImageButton
+            android:id="@+id/buttonCancel"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentStart="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_close_24"
+            android:padding="12dp"
+            android:contentDescription="Cancel"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@id/buttonCancel"
+            android:layout_toStartOf="@id/buttonConfirm"
+            android:gravity="center"
+            android:text="Crop Image"
+            android:textColor="#FFFFFF"
+            android:textSize="17sp"
+            android:letterSpacing="0.01"
+            android:fontFamily="sans-serif-medium"/>
+
+        <ImageButton
+            android:id="@+id/buttonConfirm"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_check_24"
+            android:padding="12dp"
+            android:contentDescription="Confirm crop"/>
+
+    </RelativeLayout>
+
+    <!-- Cropper view — wrapped so inset padding shrinks the container, not the view internals -->
+    <FrameLayout
+        android:id="@+id/cropperContainer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_weight="1">
 
-    <Button
-        android:id="@+id/buttonCrop"
+        <com.akshayashokcode.imagecropper.CropperView
+            android:id="@+id/cropperView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </FrameLayout>
+
+    <!-- Aspect ratio chips (shown only when multiple ratios provided) -->
+    <HorizontalScrollView
+        android:id="@+id/aspectRatioContainer"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:background="#111111"
+        android:scrollbars="none"
+        android:fillViewport="false"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:id="@+id/aspectRatioRow"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:gravity="center_vertical"/>
+
+    </HorizontalScrollView>
+
+    <!-- Bottom toolbar -->
+    <LinearLayout
+        android:id="@+id/bottomToolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Crop"/>
+        android:background="#1A1A1A"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <!-- Transform buttons row -->
+        <LinearLayout
+            android:id="@+id/buttonsRow"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:paddingBottom="4dp">
+
+            <ImageButton
+                android:id="@+id/buttonRotateCCW"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_rotate_ccw_24"
+                android:padding="12dp"
+                android:visibility="gone"
+                android:contentDescription="Rotate counter-clockwise"/>
+
+            <ImageButton
+                android:id="@+id/buttonRotateCW"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_rotate_cw_24"
+                android:padding="12dp"
+                android:visibility="gone"
+                android:contentDescription="Rotate clockwise"/>
+
+            <View
+                android:id="@+id/dividerRotateFlip"
+                android:layout_width="1dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:background="#44FFFFFF"
+                android:visibility="gone"/>
+
+            <ImageButton
+                android:id="@+id/buttonFlipH"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_flip_horizontal_24"
+                android:padding="12dp"
+                android:visibility="gone"
+                android:contentDescription="Flip horizontal"/>
+
+            <ImageButton
+                android:id="@+id/buttonFlipV"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_flip_vertical_24"
+                android:padding="12dp"
+                android:visibility="gone"
+                android:contentDescription="Flip vertical"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
 </LinearLayout>

@@ -28,6 +28,9 @@ original used only for the final crop export.
 - ~~Lifecycle handling~~ — all launchers registered before `onStart`
 - ~~FileProvider conflicts~~ — isolated subclasses per module
 - ~~Publishing~~ — both modules live on Maven Central at `io.github.akshayashokcode`
+- ~~Crop enhancements~~ — aspect ratio lock, circle mask, rotate/flip, output format/size (0.2.0)
+- ~~Gesture conflict~~ — system gesture exclusion rects applied to `CropperView` (0.2.0)
+- ~~Display cutout~~ — status bar retained; `fitsSystemWindows` handles safe area (0.2.0)
 
 ## Future Areas
 

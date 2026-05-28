@@ -14,8 +14,20 @@ import com.akshayashokcode.imagepicker.model.ImagePickerResult
  *
  * Pass an instance to [com.akshayashokcode.imagepicker.builder.ImagePickerBuilder.crop]
  * in `Activity.onCreate` before `setContent`.
+ *
+ * All parameters have sensible defaults — pass only what you want to change:
+ * ```
+ * MediaKitCropProvider()                                   // defaults
+ * MediaKitCropProvider(CropperOptions(showRotateButtons = true))
+ * MediaKitCropProvider(CropperOptions(
+ *     aspectRatios = listOf(AspectRatio.Free, AspectRatio.Square),
+ *     outputFormat = OutputFormat.PNG
+ * ))
+ * ```
  */
-class MediaKitCropProvider : ImageCropProvider {
+class MediaKitCropProvider(
+    private val options: CropperOptions = CropperOptions()
+) : ImageCropProvider {
 
     override fun createLauncher(
         context: Context,
@@ -36,6 +48,7 @@ class MediaKitCropProvider : ImageCropProvider {
         return CropLauncher { uri ->
             val intent = Intent(context, CropperActivity::class.java).apply {
                 putExtra(CropperActivity.EXTRA_INPUT_URI, uri.toString())
+                putExtra(CropperActivity.EXTRA_OPTIONS, options)
             }
             launcher.launch(intent)
         }

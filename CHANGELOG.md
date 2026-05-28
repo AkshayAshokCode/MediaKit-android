@@ -4,6 +4,26 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.2.0] — 2026-05-28
+
+### imagecropper
+- `CropperOptions` — configurable per-launch: aspect ratios, crop shape, rotate/flip buttons, output format, max/min output size
+- `AspectRatio` — `Free`, `Square`, `Ratio(w,h)` with presets `FourThree`, `SixteenNine`, `ThreeTwo`, `FiveFour`; chip row shown automatically when multiple ratios provided
+- `CropShape` — `Rectangle` (default) and `Circle` (circular mask, transparent-corner output)
+- `OutputFormat` — `JPEG(quality)`, `PNG`, `WebP(quality)`
+- Rotate 90° CW/CCW and flip horizontal/vertical transform buttons (opt-in via `showRotateButtons`, `showFlipButtons`)
+- Aspect ratio locking enforced during corner-drag resize in `CropTouchHandler`
+- Crop rect bounds constraint fixed: MOVE offsets the whole rect; corner resize clamps each edge independently
+- Redesigned `CropperActivity` UI: dark top bar (cancel / title / confirm), aspect ratio chip row, bottom transform toolbar
+- Immersive mode: navigation bar hidden with `BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE`; status bar retained for camera cutout safety
+- Display cutout and rounded-corner safe area handled via `fitsSystemWindows` and mandatory gesture insets
+- System gesture exclusion rect covers full `CropperView` — crop drag no longer triggers back gesture
+- `CropperView.onSizeChanged` re-fits image reactively when insets reshape the container
+- Published to Maven Central: `io.github.akshayashokcode:imagecropper:0.2.0`
+
+### imagepicker
+- Published to Maven Central: `io.github.akshayashokcode:imagepicker:0.2.0`
+
 ## [0.1.0] — 2026-05-28
 
 ### imagepicker

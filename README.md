@@ -14,7 +14,7 @@ A modular Android media SDK built with Kotlin. Pick images from the gallery or c
 | Artifact | Description |
 |----------|-------------|
 | `io.github.akshayashokcode:imagepicker` | Gallery & camera image picking with lifecycle-safe activity result handling |
-| `io.github.akshayashokcode:imagecropper` | Custom crop view with touch-driven resize, rule-of-thirds grid, and state restoration |
+| `io.github.akshayashokcode:imagecropper` | Custom crop view with aspect ratio lock, shape mask, rotate/flip, and configurable output |
 
 ---
 
@@ -25,10 +25,10 @@ Add to your app's `build.gradle.kts`:
 ```kotlin
 dependencies {
     // Image picking (gallery + camera)
-    implementation("io.github.akshayashokcode:imagepicker:0.1.0")
+    implementation("io.github.akshayashokcode:imagepicker:0.2.0")
 
     // Optional — only needed if you want the built-in crop UI
-    implementation("io.github.akshayashokcode:imagecropper:0.1.0")
+    implementation("io.github.akshayashokcode:imagecropper:0.2.0")
 }
 ```
 
@@ -79,6 +79,29 @@ val picker = ImagePicker.with(this, this)
     .onResult { result ->
         // result.uri is the cropped image URI
     }
+```
+
+### Pick and crop with options
+
+All `CropperOptions` parameters are optional — only set what you need:
+
+```kotlin
+val picker = ImagePicker.with(this, this)
+    .source(MediaSource.Gallery)
+    .crop(
+        MediaKitCropProvider(
+            CropperOptions(
+                aspectRatios = listOf(AspectRatio.Free, AspectRatio.Square, AspectRatio.SixteenNine),
+                showRotateButtons = true,
+                showFlipButtons = true,
+                cropShape = CropShape.Rectangle,       // or CropShape.Circle
+                outputFormat = OutputFormat.JPEG(quality = 90),
+                maxOutputWidth = 2048,
+                maxOutputHeight = 2048
+            )
+        )
+    )
+    .onResult { result -> }
 ```
 
 ### Camera capture
@@ -145,6 +168,52 @@ val picker = ImagePicker.with(this, this)
 MediaSource.Gallery  // system photo picker / file picker
 MediaSource.Camera   // camera capture (CAMERA permission requested automatically)
 MediaSource.Both     // falls back to gallery (chooser UI planned)
+```
+
+### CropperOptions
+
+```kotlin
+CropperOptions(
+    aspectRatios: List<AspectRatio> = listOf(AspectRatio.Free),
+    lockAspectRatio: Boolean = false,
+    cropShape: CropShape = CropShape.Rectangle,
+    showRotateButtons: Boolean = false,   // 90° CW / CCW buttons
+    showFlipButtons: Boolean = false,     // horizontal / vertical flip buttons
+    outputFormat: OutputFormat = OutputFormat.JPEG(),
+    maxOutputWidth: Int = 0,              // 0 = no limit
+    maxOutputHeight: Int = 0,
+    minOutputWidth: Int = 100,
+    minOutputHeight: Int = 100
+)
+```
+
+#### AspectRatio
+
+```kotlin
+AspectRatio.Free                  // unconstrained (default)
+AspectRatio.Square                // 1:1
+AspectRatio.Ratio(width, height)  // e.g. Ratio(16, 9)
+
+// Convenience presets
+AspectRatio.FourThree             // 4:3
+AspectRatio.SixteenNine           // 16:9
+AspectRatio.ThreeTwo              // 3:2
+AspectRatio.FiveFour              // 5:4
+```
+
+#### CropShape
+
+```kotlin
+CropShape.Rectangle   // standard rectangular crop (default)
+CropShape.Circle      // circular mask — output bitmap has transparent corners
+```
+
+#### OutputFormat
+
+```kotlin
+OutputFormat.JPEG(quality: Int = 90)   // default
+OutputFormat.PNG                        // lossless, transparent background for circle crop
+OutputFormat.WebP(quality: Int = 90)
 ```
 
 ### Result Types

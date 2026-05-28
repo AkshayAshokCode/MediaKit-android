@@ -8,7 +8,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.mutableStateOf
+import com.akshayashokcode.imagecropper.AspectRatio
+import com.akshayashokcode.imagecropper.CropperOptions
 import com.akshayashokcode.imagecropper.MediaKitCropProvider
+import com.akshayashokcode.imagecropper.OutputFormat
 import com.akshayashokcode.imagepicker.entrypoint.ImagePicker
 import com.akshayashokcode.imagepicker.model.ImagePickerResult
 import com.akshayashokcode.imagepicker.model.MediaSource
@@ -24,7 +27,23 @@ class MainActivity : ComponentActivity() {
 
         val picker = ImagePicker.with(this, this)
             .source(MediaSource.Gallery)
-            .crop(MediaKitCropProvider())
+            .crop(
+                MediaKitCropProvider(
+                    CropperOptions(
+                        aspectRatios = listOf(
+                            AspectRatio.Free,
+                            AspectRatio.Square,
+                            AspectRatio.FourThree,
+                            AspectRatio.SixteenNine
+                        ),
+                        showRotateButtons = true,
+                        showFlipButtons = true,
+                        outputFormat = OutputFormat.JPEG(quality = 90),
+                        maxOutputWidth = 2048,
+                        maxOutputHeight = 2048
+                    )
+                )
+            )
             .onResult { result ->
                 when (result) {
                     is ImagePickerResult.Success -> {
