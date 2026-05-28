@@ -1,8 +1,9 @@
+import com.vanniktech.maven.publish.SonatypeHost
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    `maven-publish`
-    signing
+    alias(libs.plugins.vanniktech.publish)
 }
 
 android {
@@ -33,12 +34,6 @@ android {
         jvmTarget = "11"
     }
 
-    publishing {
-        singleVariant("release") {
-            withSourcesJar()
-            withJavadocJar()
-        }
-    }
 }
 
 dependencies {
@@ -50,64 +45,38 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 }
 
-afterEvaluate {
-    publishing {
-        publications {
-            create<MavenPublication>("release") {
-                from(components["release"])
-                groupId = project.findProperty("GROUP_ID") as String
-                artifactId = "imagepicker"
-                version = project.findProperty("VERSION_NAME") as String
+mavenPublishing {
+    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+    signAllPublications()
 
-                pom {
-                    name.set("MediaKit ImagePicker")
-                    description.set("Lifecycle-safe gallery and camera image picker for Android. Fluent builder API built on Activity Result APIs.")
-                    url.set("https://github.com/AkshayAshokCode/MediaKit-android")
-                    licenses {
-                        license {
-                            name.set("MIT License")
-                            url.set("https://opensource.org/licenses/MIT")
-                        }
-                    }
-                    developers {
-                        developer {
-                            id.set("AkshayAshokCode")
-                            name.set("Akshay Ashok")
-                            email.set("akshayashokan1054@gmail.com")
-                            url.set("https://github.com/AkshayAshokCode")
-                        }
-                    }
-                    scm {
-                        connection.set("scm:git:https://github.com/AkshayAshokCode/MediaKit-android.git")
-                        developerConnection.set("scm:git:ssh://git@github.com/AkshayAshokCode/MediaKit-android.git")
-                        url.set("https://github.com/AkshayAshokCode/MediaKit-android")
-                    }
-                }
+    coordinates(
+        groupId = project.findProperty("GROUP_ID") as String,
+        artifactId = "imagepicker",
+        version = project.findProperty("VERSION_NAME") as String
+    )
+
+    pom {
+        name.set("MediaKit ImagePicker")
+        description.set("Lifecycle-safe gallery and camera image picker for Android. Fluent builder API built on Activity Result APIs.")
+        url.set("https://github.com/AkshayAshokCode/MediaKit-android")
+        licenses {
+            license {
+                name.set("MIT License")
+                url.set("https://opensource.org/licenses/MIT")
             }
         }
-
-        repositories {
-            maven {
-                name = "sonatype"
-                url = uri(
-                    if ((project.findProperty("VERSION_NAME") as String).endsWith("SNAPSHOT"))
-                        "https://s01.oss.sonatype.org/content/repositories/snapshots/"
-                    else
-                        "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
-                )
-                credentials {
-                    username = project.findProperty("SONATYPE_USERNAME") as String? ?: ""
-                    password = project.findProperty("SONATYPE_PASSWORD") as String? ?: ""
-                }
+        developers {
+            developer {
+                id.set("AkshayAshokCode")
+                name.set("Akshay Ashok")
+                email.set("akshayashokan1054@gmail.com")
+                url.set("https://github.com/AkshayAshokCode")
             }
         }
-    }
-
-    signing {
-        val signingKeyId = project.findProperty("SIGNING_KEY_ID") as String?
-        val signingKey = project.findProperty("SIGNING_KEY") as String?
-        val signingPassword = project.findProperty("SIGNING_PASSWORD") as String?
-        useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
-        sign(publishing.publications["release"])
+        scm {
+            url.set("https://github.com/AkshayAshokCode/MediaKit-android")
+            connection.set("scm:git:https://github.com/AkshayAshokCode/MediaKit-android.git")
+            developerConnection.set("scm:git:ssh://git@github.com/AkshayAshokCode/MediaKit-android.git")
+        }
     }
 }

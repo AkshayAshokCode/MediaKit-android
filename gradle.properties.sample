@@ -1,0 +1,21 @@
+# ---------------------------------------------------------------
+# gradle.properties.sample
+#
+# Copy this file to ~/.gradle/gradle.properties and fill in your
+# real values. Never commit credentials to the repository.
+# ---------------------------------------------------------------
+
+# Maven Central (central.sonatype.org)
+# Generate a user token at: Account → Generate User Token
+mavenCentralUsername=your-token-username
+mavenCentralPassword=your-token-password
+
+# GPG signing
+# signing.keyId     — last 8 characters of your key ID
+#   Run: gpg --list-secret-keys --keyid-format SHORT
+# signing.password  — the passphrase you set when generating the key
+# signing.secretKeyRingFile — path to your exported keyring
+#   Run: gpg --export-secret-keys > ~/.gnupg/secring.gpg
+signing.keyId=XXXXXXXX
+signing.password=your-gpg-passphrase
+signing.secretKeyRingFile=/Users/yourname/.gnupg/secring.gpg
