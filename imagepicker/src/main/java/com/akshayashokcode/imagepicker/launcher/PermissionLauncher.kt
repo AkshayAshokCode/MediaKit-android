@@ -6,7 +6,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import com.akshayashokcode.imagepicker.model.ImagePickerException
 import com.akshayashokcode.imagepicker.util.PermissionUtils
 
-class PermissionLauncher(
+internal class PermissionLauncher(
     private val context: Context,
     caller: ActivityResultCaller,
     private val onResult: (granted: Boolean) -> Unit,
@@ -20,8 +20,7 @@ class PermissionLauncher(
             val granted = permissions.all { it.value }
             onResult(granted)
         } catch (e: Exception) {
-            onError?.invoke(
-                ImagePickerException.PermissionDenied)
+            onError?.invoke(ImagePickerException.PermissionDenied)
             onResult(false)
         }
     }
@@ -31,8 +30,7 @@ class PermissionLauncher(
             val permissions = PermissionUtils.getRequiredCameraPermissions()
             permissionLauncher.launch(permissions)
         } catch (e: Exception) {
-            onError?.invoke(
-                ImagePickerException.PermissionDenied)
+            onError?.invoke(ImagePickerException.PermissionDenied)
             onResult(false)
         }
     }

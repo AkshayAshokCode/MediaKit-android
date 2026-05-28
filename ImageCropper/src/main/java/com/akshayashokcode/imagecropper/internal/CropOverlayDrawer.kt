@@ -2,7 +2,7 @@ package com.akshayashokcode.imagecropper.internal
 
 import android.graphics.*
 
-class CropOverlayDrawer {
+internal class CropOverlayDrawer {
 
     val bitmapPaint = Paint(Paint.ANTI_ALIAS_FLAG)
 

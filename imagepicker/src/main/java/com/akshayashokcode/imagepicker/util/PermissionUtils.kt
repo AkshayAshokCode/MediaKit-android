@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import androidx.core.content.ContextCompat
 
-object PermissionUtils {
+internal object PermissionUtils {
     /**
      * Checks if all required camera permissions are granted.
      */
