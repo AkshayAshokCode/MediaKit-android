@@ -18,10 +18,10 @@ Add to your app's `build.gradle.kts`:
 ```kotlin
 dependencies {
     // Image picking (gallery + camera)
-    implementation("io.github.akshayashokcode:imagepicker:1.0.0")
+    implementation("io.github.akshayashokcode:imagepicker:0.1.0")
 
     // Optional — add only if you need the built-in crop UI
-    implementation("io.github.akshayashokcode:imagecropper:1.0.0")
+    implementation("io.github.akshayashokcode:imagecropper:0.1.0")
 }
 ```
 

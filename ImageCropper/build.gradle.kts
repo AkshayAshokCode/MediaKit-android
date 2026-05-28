@@ -97,8 +97,8 @@ afterEvaluate {
                         "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
                 )
                 credentials {
-                    username = project.findProperty("OSSRH_USERNAME") as String? ?: ""
-                    password = project.findProperty("OSSRH_PASSWORD") as String? ?: ""
+                    username = project.findProperty("SONATYPE_USERNAME") as String? ?: ""
+                    password = project.findProperty("SONATYPE_PASSWORD") as String? ?: ""
                 }
             }
         }
