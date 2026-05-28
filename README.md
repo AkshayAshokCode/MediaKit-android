@@ -6,8 +6,8 @@ A modular Android media SDK built with Kotlin. Pick images from the gallery or c
 
 | Artifact | Description |
 |----------|-------------|
-| `com.akshayashokcode:imagepicker` | Gallery & camera image picking with lifecycle-safe activity result handling |
-| `com.akshayashokcode:imagecropper` | Custom crop view with touch-driven resize, rule-of-thirds grid, and state restoration |
+| `io.github.akshayashokcode:imagepicker` | Gallery & camera image picking with lifecycle-safe activity result handling |
+| `io.github.akshayashokcode:imagecropper` | Custom crop view with touch-driven resize, rule-of-thirds grid, and state restoration |
 
 ---
 
@@ -18,10 +18,10 @@ Add to your app's `build.gradle.kts`:
 ```kotlin
 dependencies {
     // Image picking (gallery + camera)
-    implementation("com.akshayashokcode:imagepicker:1.0.0")
+    implementation("io.github.akshayashokcode:imagepicker:1.0.0")
 
     // Optional — add only if you need the built-in crop UI
-    implementation("com.akshayashokcode:imagecropper:1.0.0")
+    implementation("io.github.akshayashokcode:imagecropper:1.0.0")
 }
 ```
 

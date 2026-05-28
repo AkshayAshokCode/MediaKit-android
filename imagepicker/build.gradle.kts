@@ -71,15 +71,16 @@ afterEvaluate {
                     }
                     developers {
                         developer {
-                            id.set("akshayashokcode")
+                            id.set("AkshayAshokCode")
                             name.set("Akshay Ashok")
                             email.set("akshayashokan1054@gmail.com")
+                            url.set("https://github.com/AkshayAshokCode")
                         }
                     }
                     scm {
-                        connection.set("scm:git:github.com/AkshayAshokCode/MediaKit-android.git")
-                        developerConnection.set("scm:git:ssh://github.com/AkshayAshokCode/MediaKit-android.git")
-                        url.set("https://github.com/AkshayAshokCode/MediaKit-android/tree/main")
+                        connection.set("scm:git:https://github.com/AkshayAshokCode/MediaKit-android.git")
+                        developerConnection.set("scm:git:ssh://git@github.com/AkshayAshokCode/MediaKit-android.git")
+                        url.set("https://github.com/AkshayAshokCode/MediaKit-android")
                     }
                 }
             }
