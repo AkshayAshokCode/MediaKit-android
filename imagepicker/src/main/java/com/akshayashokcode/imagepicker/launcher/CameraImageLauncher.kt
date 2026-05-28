@@ -12,7 +12,7 @@ import com.akshayashokcode.imagepicker.util.AppAvailabilityUtils
 import com.akshayashokcode.imagepicker.util.FileUtils
 import com.akshayashokcode.imagepicker.util.ImageOrientationUtils
 
-class CameraImageLauncher(
+internal class CameraImageLauncher(
     private val context: Context,
     caller: ActivityResultCaller,
     private val callback: (ImagePickerResult) -> Unit,
@@ -40,18 +40,14 @@ class CameraImageLauncher(
 
     private val launcher =
         caller.registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
-            if (success && tempImageUri != null) {
+            val uri = tempImageUri
+            if (success && uri != null) {
                 try {
                     val rotatedBitmap = ImageOrientationUtils
-                        .getOrientedBitmap(context.contentResolver, tempImageUri!!)
+                        .getOrientedBitmap(context.contentResolver, uri)
 
                     if (rotatedBitmap != null) {
-                        callback(
-                            ImagePickerResult.SuccessWithBitmap(
-                                uri = tempImageUri!!,
-                                bitmap = rotatedBitmap
-                            )
-                        )
+                        callback(ImagePickerResult.SuccessWithBitmap(uri = uri, bitmap = rotatedBitmap))
                     } else {
                         onError?.invoke(ImagePickerException.DecodingFailed)
                         callback(ImagePickerResult.Error("Failed to decode or rotate image"))
@@ -81,34 +77,19 @@ class CameraImageLauncher(
     }
 
     private fun launchCamera() {
-        tempImageUri = FileUtils.createTempImageUri(context)
-        if (tempImageUri == null) {
+        val imageUri = FileUtils.createTempImageUri(context)
+        if (imageUri == null) {
             onError?.invoke(ImagePickerException.FileCreationFailed)
             callback(ImagePickerResult.Error("Unable to create temporary file for captured image"))
             return
         }
-
-        val imageUri = tempImageUri
-
-        if (imageUri == null) {
-            onError?.invoke(ImagePickerException.InvalidUri)
-            callback(ImagePickerResult.Error("Failed to create image URI"))
-            return
-        }
+        tempImageUri = imageUri
 
         try {
-
             launcher.launch(imageUri)
-
         } catch (e: Exception) {
-
             onError?.invoke(ImagePickerException.IntentFailed)
-
-            callback(
-                ImagePickerResult.Error(
-                    "No camera found to handle image capture"
-                )
-            )
+            callback(ImagePickerResult.Error("No camera found to handle image capture"))
         }
     }
 

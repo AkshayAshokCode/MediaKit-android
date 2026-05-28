@@ -3,7 +3,7 @@ package com.akshayashokcode.imagecropper.internal
 import android.graphics.RectF
 import kotlin.math.abs
 
-class CropTouchHandler(private val cropRect: RectF) {
+internal class CropTouchHandler(private val cropRect: RectF) {
 
     enum class Area { NONE, MOVE, TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT }
 

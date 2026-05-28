@@ -5,7 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.provider.MediaStore
 
-object AppAvailabilityUtils {
+internal object AppAvailabilityUtils {
     fun isGalleryAvailable(context: Context): Boolean {
         val intent = Intent(Intent.ACTION_PICK).apply {
             type = "image/*"

@@ -2,7 +2,7 @@ package com.akshayashokcode.imagecropper.internal
 
 import androidx.core.graphics.toColorInt
 
-object CropConstants {
+internal object CropConstants {
     const val TOUCH_THRESHOLD = 40f
     const val MIN_CROP_SIZE = 200f
     const val CORNER_STROKE_WIDTH = 10f

@@ -1,15 +1,15 @@
 package com.akshayashokcode.imagecropper
 
-import android.app.Activity
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Button
 import androidx.activity.ComponentActivity
+import androidx.core.content.FileProvider
+import androidx.core.net.toUri
 import java.io.File
 import java.io.FileOutputStream
-import androidx.core.net.toUri
 
 
 class CropperActivity : ComponentActivity() {
@@ -39,10 +39,13 @@ class CropperActivity : ComponentActivity() {
 
         val inputUri = uriString.toUri()
 
-        contentResolver.openInputStream(inputUri)?.use { stream ->
-            val bitmap = BitmapFactory.decodeStream(stream)
-            cropperView.setImageBitmap(bitmap)
+        val bitmap = contentResolver.openInputStream(inputUri)?.use { BitmapFactory.decodeStream(it) }
+        if (bitmap == null) {
+            setResult(RESULT_CANCELED)
+            finish()
+            return
         }
+        cropperView.setImageBitmap(bitmap)
 
         cropButton.setOnClickListener {
 
@@ -69,15 +72,17 @@ class CropperActivity : ComponentActivity() {
                 )
             }
 
-            val outputUri = Uri.fromFile(outputFile)
+            val outputUri = FileProvider.getUriForFile(
+                this,
+                "${packageName}.imagecropper.provider",
+                outputFile
+            )
 
             setResult(
                 RESULT_OK,
                 Intent().apply {
-                    putExtra(
-                        EXTRA_OUTPUT_URI,
-                        outputUri.toString()
-                    )
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    putExtra(EXTRA_OUTPUT_URI, outputUri.toString())
                 }
             )
 

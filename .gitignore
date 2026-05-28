@@ -13,3 +13,14 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Kotlin incremental compilation cache
+.kotlin/
+
+# Module-level build output (root /build above only covers the top-level dir)
+**/build/
+
+# GPG keyring files — never commit signing keys
+*.gpg
+*.kbx
+secring.gpg

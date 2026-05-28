@@ -11,13 +11,13 @@ import android.util.Log
 import androidx.exifinterface.media.ExifInterface
 import java.io.IOException
 
-object ImageOrientationUtils {
+internal object ImageOrientationUtils {
 
     fun getOrientedBitmap(contentResolver: ContentResolver, imageUri: Uri): Bitmap? {
         return try {
             val originalBitmap = decodeBitmap(contentResolver, imageUri) ?: return null
-            val inputStream = contentResolver.openInputStream(imageUri) ?: return originalBitmap
-            val exif = ExifInterface(inputStream)
+            val exif = contentResolver.openInputStream(imageUri)?.use { ExifInterface(it) }
+                ?: return originalBitmap
             rotateBitmapIfNeeded(originalBitmap, exif)
         } catch (e: IOException) {
             Log.e("ImageOrientationUtils", "Failed to get oriented bitmap", e)
