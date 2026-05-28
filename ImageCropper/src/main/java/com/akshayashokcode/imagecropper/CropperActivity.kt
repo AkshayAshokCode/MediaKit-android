@@ -2,7 +2,6 @@ package com.akshayashokcode.imagecropper
 
 import android.content.Intent
 import android.graphics.BitmapFactory
-import android.net.Uri
 import android.os.Bundle
 import android.widget.Button
 import androidx.activity.ComponentActivity
@@ -10,7 +9,6 @@ import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import java.io.File
 import java.io.FileOutputStream
-
 
 class CropperActivity : ComponentActivity() {
 
@@ -48,28 +46,18 @@ class CropperActivity : ComponentActivity() {
         cropperView.setImageBitmap(bitmap)
 
         cropButton.setOnClickListener {
-
             val croppedBitmap = cropperView.getCroppedImage()
 
             if (croppedBitmap == null) {
-
                 setResult(RESULT_CANCELED)
                 finish()
                 return@setOnClickListener
             }
 
-            val outputFile = File(
-                cacheDir,
-                "cropped_${System.currentTimeMillis()}.jpg"
-            )
+            val outputFile = File(cacheDir, "cropped_${System.currentTimeMillis()}.jpg")
 
             FileOutputStream(outputFile).use { outputStream ->
-
-                croppedBitmap.compress(
-                    android.graphics.Bitmap.CompressFormat.JPEG,
-                    100,
-                    outputStream
-                )
+                croppedBitmap.compress(android.graphics.Bitmap.CompressFormat.JPEG, 100, outputStream)
             }
 
             val outputUri = FileProvider.getUriForFile(

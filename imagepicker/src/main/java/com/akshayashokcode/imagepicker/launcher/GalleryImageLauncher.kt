@@ -1,7 +1,6 @@
 package com.akshayashokcode.imagepicker.launcher
 
 import android.content.ActivityNotFoundException
-import android.content.Context
 import android.net.Uri
 import androidx.activity.result.ActivityResultCaller
 import androidx.activity.result.contract.ActivityResultContracts
@@ -9,7 +8,6 @@ import com.akshayashokcode.imagepicker.model.ImagePickerException
 import com.akshayashokcode.imagepicker.model.ImagePickerResult
 
 internal class GalleryImageLauncher(
-    private val context: Context,
     caller: ActivityResultCaller,
     private val callback: (ImagePickerResult) -> Unit,
     private val onError: ((ImagePickerException) -> Unit)? = null

@@ -20,8 +20,7 @@ internal class PermissionLauncher(
             val granted = permissions.all { it.value }
             onResult(granted)
         } catch (e: Exception) {
-            onError?.invoke(
-                ImagePickerException.PermissionDenied)
+            onError?.invoke(ImagePickerException.PermissionDenied)
             onResult(false)
         }
     }
@@ -31,8 +30,7 @@ internal class PermissionLauncher(
             val permissions = PermissionUtils.getRequiredCameraPermissions()
             permissionLauncher.launch(permissions)
         } catch (e: Exception) {
-            onError?.invoke(
-                ImagePickerException.PermissionDenied)
+            onError?.invoke(ImagePickerException.PermissionDenied)
             onResult(false)
         }
     }

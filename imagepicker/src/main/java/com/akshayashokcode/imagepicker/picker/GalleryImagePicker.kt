@@ -17,7 +17,6 @@ internal class GalleryImagePicker(
 ) {
 
     private val launcher = GalleryImageLauncher(
-        context = context,
         caller = caller,
         callback = { result ->
             when (result) {
