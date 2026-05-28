@@ -25,6 +25,18 @@ class ImagePickerBuilder private constructor(
     private var onResult: ((ImagePickerResult) -> Unit)? = null
     private var onError: ((ImagePickerException) -> Unit)? = null
 
+    private val coordinator by lazy {
+
+        ImagePickerCoordinator(
+            context = context,
+            caller = caller,
+            source = source,
+            crop = crop,
+            onResult = onResult!!,
+            onError = onError
+        )
+    }
+
     companion object {
         /**
          * Entry point to start building an image picker flow.
@@ -78,12 +90,6 @@ class ImagePickerBuilder private constructor(
             "You must provide a result callback using onResult()"
         }
 
-        ImagePickerCoordinator(
-            context = context,
-            caller = caller,
-            source = source,
-            onResult = onResult!!,
-            onError = onError
-        ).launch()
+        coordinator.launch()
     }
 }

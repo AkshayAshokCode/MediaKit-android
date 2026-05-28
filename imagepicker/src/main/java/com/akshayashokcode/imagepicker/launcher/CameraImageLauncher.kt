@@ -88,11 +88,27 @@ class CameraImageLauncher(
             return
         }
 
+        val imageUri = tempImageUri
+
+        if (imageUri == null) {
+            onError?.invoke(ImagePickerException.InvalidUri)
+            callback(ImagePickerResult.Error("Failed to create image URI"))
+            return
+        }
+
         try {
-            launcher.launch(tempImageUri)
+
+            launcher.launch(imageUri)
+
         } catch (e: Exception) {
+
             onError?.invoke(ImagePickerException.IntentFailed)
-            callback(ImagePickerResult.Error("No camera found to handle image capture"))
+
+            callback(
+                ImagePickerResult.Error(
+                    "No camera found to handle image capture"
+                )
+            )
         }
     }
 

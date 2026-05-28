@@ -16,6 +16,7 @@ internal class ImagePickerCoordinator(
     private val context: Context,
     private val caller: ActivityResultCaller,
     private val source: MediaSource,
+    private val crop: Boolean,
     private val onResult: (ImagePickerResult) -> Unit,
     private val onError: ((ImagePickerException) -> Unit)? = null
 ) {
@@ -24,6 +25,7 @@ internal class ImagePickerCoordinator(
         GalleryImagePicker(
             context = context,
             caller = caller,
+            crop = crop,
             callback = onResult,
             onError = onError
         )
@@ -33,6 +35,7 @@ internal class ImagePickerCoordinator(
         CameraImagePicker(
             context = context,
             caller = caller,
+            crop = crop,
             callback = onResult,
             onError = onError
         )

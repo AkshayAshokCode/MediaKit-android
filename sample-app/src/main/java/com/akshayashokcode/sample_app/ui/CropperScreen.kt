@@ -3,6 +3,8 @@ package com.akshayashokcode.sample_app.ui
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.view.LayoutInflater
+import androidx.activity.ComponentActivity
+import androidx.activity.result.ActivityResultCaller
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,13 +25,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.akshayashokcode.imagecropper.CropperView
+import com.akshayashokcode.imagepicker.entrypoint.ImagePicker
+import com.akshayashokcode.imagepicker.model.MediaSource
 import com.akshayashokcode.sample_app.R
 
 @Composable
 fun CropperScreen() {
     val context = LocalContext.current
     var croppedBitmap by remember { mutableStateOf<Bitmap?>(null) }
-
+    val activity = context as ComponentActivity
     val cropperViewState = remember { mutableStateOf<CropperView?>(null) }
 
     Column(
@@ -51,7 +55,7 @@ fun CropperScreen() {
                     R.drawable.image
                 )
 
-                cropperView.setImageBitmap(bitmap)
+               // cropperView.setImageBitmap(bitmap)
 
                 view
             },
@@ -59,7 +63,23 @@ fun CropperScreen() {
                 .weight(1f)
                 .fillMaxWidth()
         )
+        Button(
+            onClick = {
 
+                ImagePicker.with(context,activity)
+                    .source(MediaSource.Gallery)
+                    .crop(true)
+                    .onResult { result ->
+
+                    }
+                    .onError {
+
+                    }
+                    .launch()
+            }
+        ) {
+            Text("Pick Image")
+        }
         Button(
             onClick = {
                 croppedBitmap = cropperViewState.value?.getCroppedImage()
