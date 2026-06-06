@@ -62,12 +62,18 @@ internal object VideoTranscoder {
                 srcFmt.getInteger(MediaFormat.KEY_ROTATION) else 0
 
             // Duration for progress reporting
+            // MediaMetadataRetriever only implements AutoCloseable on API 29+; use release() instead.
             val totalUs = if (srcFmt.containsKey(MediaFormat.KEY_DURATION))
                 srcFmt.getLong(MediaFormat.KEY_DURATION)
-            else MediaMetadataRetriever().use { r ->
-                r.setDataSource(context, sourceUri)
-                r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
-                    ?.toLong()?.times(1000L) ?: 0L
+            else {
+                val r = MediaMetadataRetriever()
+                try {
+                    r.setDataSource(context, sourceUri)
+                    r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
+                        ?.toLong()?.times(1000L) ?: 0L
+                } finally {
+                    r.release()
+                }
             }
 
             // Compute coded output dimensions (must be even; respect rotation swap)
