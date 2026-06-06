@@ -1,12 +1,16 @@
 package com.akshayashokcode.sample_app.ui
 
-import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -15,126 +19,95 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.akshayashokcode.mediakitcore.ExperimentalMediaKitApi
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMediaKitApi::class)
 @Composable
 fun CropperScreen(
-    onPickImage: () -> Unit,
-    pickedBitmap: Bitmap?
+    onLaunchCropPicker: () -> Unit,
+    croppedUri: Uri?,
+    contentPadding: PaddingValues = PaddingValues()
 ) {
-    Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(
-                        "MediaKit",
-                        fontWeight = FontWeight.SemiBold
-                    )
-                },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                )
-            )
+    val context = LocalContext.current
+
+    val croppedBitmap = remember(croppedUri) {
+        croppedUri?.let { uri ->
+            context.contentResolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it) }
         }
-    ) { innerPadding ->
-        Column(
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(contentPadding)
+            .consumeWindowInsets(contentPadding)
+            .padding(horizontal = 20.dp, vertical = 12.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "Pick an image from your gallery and crop it",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(bottom = 20.dp)
+        )
+
+        Box(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .padding(horizontal = 20.dp, vertical = 12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .fillMaxWidth()
+                .weight(1f)
+                .clip(RoundedCornerShape(20.dp))
+                .background(MaterialTheme.colorScheme.surfaceVariant),
+            contentAlignment = Alignment.Center
         ) {
-            Text(
-                text = "Select a photo from your gallery and crop it to your liking",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(bottom = 20.dp)
-            )
-
-            // Image preview / empty state
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .clip(RoundedCornerShape(20.dp))
-                    .background(MaterialTheme.colorScheme.surfaceVariant),
-                contentAlignment = Alignment.Center
-            ) {
-                if (pickedBitmap != null) {
-                    Image(
-                        bitmap = pickedBitmap.asImageBitmap(),
-                        contentDescription = "Cropped image",
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Fit
-                    )
-                } else {
-                    EmptyState()
-                }
-            }
-
-            Spacer(Modifier.height(20.dp))
-
-            if (pickedBitmap != null) {
-                // Primary: pick another; secondary label to clarify the crop step
-                Button(
-                    onClick = onPickImage,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(52.dp),
-                    shape = RoundedCornerShape(14.dp)
-                ) {
-                    Text("Pick Another Photo", style = MaterialTheme.typography.labelLarge)
-                }
-                Spacer(Modifier.height(8.dp))
-                Text(
-                    "Gallery → Crop → Result",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(bottom = 4.dp)
+            if (croppedBitmap != null) {
+                Image(
+                    bitmap = croppedBitmap.asImageBitmap(),
+                    contentDescription = "Cropped image",
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Fit
                 )
             } else {
-                Button(
-                    onClick = onPickImage,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(52.dp),
-                    shape = RoundedCornerShape(14.dp)
-                ) {
-                    Text("Select from Gallery", style = MaterialTheme.typography.labelLarge)
-                }
-                Spacer(Modifier.height(8.dp))
-                Text(
-                    "You'll be able to crop after selecting",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(bottom = 4.dp)
-                )
+                CropEmptyState()
             }
+        }
+
+        Spacer(Modifier.height(16.dp))
+
+        Button(
+            onClick = onLaunchCropPicker,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(52.dp),
+            shape = RoundedCornerShape(14.dp)
+        ) {
+            Text(
+                if (croppedBitmap != null) "Pick & Crop Another" else "Pick & Crop",
+                style = MaterialTheme.typography.labelLarge
+            )
         }
     }
 }
 
 @Composable
-private fun EmptyState() {
+private fun CropEmptyState() {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -143,42 +116,28 @@ private fun EmptyState() {
             modifier = Modifier
                 .size(88.dp)
                 .background(
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.10f),
-                    shape = CircleShape
+                    MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.10f),
+                    CircleShape
                 ),
             contentAlignment = Alignment.Center
         ) {
-            // Simple photo placeholder drawn with nested boxes
             Box(
                 modifier = Modifier
                     .size(40.dp)
                     .background(
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.25f),
-                        shape = RoundedCornerShape(6.dp)
+                        MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.25f),
+                        RoundedCornerShape(6.dp)
                     )
-            )
-            Box(
-                modifier = Modifier
-                    .size(16.dp)
-                    .background(
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.40f),
-                        shape = CircleShape
-                    )
-                    .align(Alignment.TopCenter)
             )
         }
-
         Spacer(Modifier.height(20.dp))
-
         Text(
-            "No image selected",
+            "No image cropped yet",
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Medium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
-
         Spacer(Modifier.height(6.dp))
-
         Text(
             "Your cropped photo will appear here",
             style = MaterialTheme.typography.bodySmall,

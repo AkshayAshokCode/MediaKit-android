@@ -17,7 +17,7 @@ import com.akshayashokcode.imagepicker.picker.GalleryImagePicker
  * before onStart(), as Android requires.
  */
 internal class ImagePickerCoordinator(
-    context: Context,
+    private val context: Context,
     caller: ActivityResultCaller,
     private val getSource: () -> MediaSource,
     getCropLauncher: () -> CropLauncher?,
@@ -45,10 +45,11 @@ internal class ImagePickerCoordinator(
         when (getSource()) {
             is MediaSource.Gallery -> galleryPicker.launch()
             is MediaSource.Camera -> cameraPicker.launch()
-            is MediaSource.Both -> {
-                // Future: show a source chooser bottom sheet.
-                galleryPicker.launch()
-            }
+            is MediaSource.Both -> showSourceChooserDialog(
+                context = context,
+                onGallery = { galleryPicker.launch() },
+                onCamera = { cameraPicker.launch() }
+            )
         }
     }
 }

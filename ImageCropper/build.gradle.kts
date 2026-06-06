@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace = "com.akshayashokcode.imagecropper"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         minSdk = 24
@@ -38,6 +38,7 @@ android {
 
 dependencies {
     api(project(":imagepicker"))
+    implementation(project(":mediakit-core"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.activity.ktx)

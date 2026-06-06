@@ -6,12 +6,12 @@ plugins {
 
 android {
     namespace = "com.akshayashokcode.sample_app"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.akshayashokcode.sample_app"
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 
@@ -59,4 +59,11 @@ dependencies {
 
     implementation(project(":imagecropper"))
     implementation(project(":imagepicker"))
+    implementation(project(":mediapicker"))
+    implementation(project(":imagecompressor"))
+    implementation(project(":audiorecorder"))
+    implementation(project(":videocompressor"))
+    implementation(project(":mediapreviewer"))
+    implementation(libs.androidx.material.icons.extended)
+    implementation(libs.androidx.navigation.compose)
 }

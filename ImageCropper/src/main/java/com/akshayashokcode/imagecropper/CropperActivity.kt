@@ -57,13 +57,37 @@ class CropperActivity : ComponentActivity() {
         val uriString = intent.getStringExtra(EXTRA_INPUT_URI)
         if (uriString == null) { finish(); return }
 
-        val bitmap = contentResolver.openInputStream(uriString.toUri())?.use {
-            BitmapFactory.decodeStream(it)
-        }
+        val uri = uriString.toUri()
+        val bitmap = decodeSampledBitmap(uri)
         if (bitmap == null) { setResult(RESULT_CANCELED); finish(); return }
 
         cropperView.setImageBitmap(bitmap)
         applyOptions()
+    }
+
+    private fun decodeSampledBitmap(uri: android.net.Uri): Bitmap? {
+        // Cap to the larger of (maxOutputDimension, 2048) to avoid decoding multi-MB bitmaps
+        // that only get scaled back down for display and for a crop that is itself bounded.
+        val maxDim = maxOf(
+            options.maxOutputWidth.takeIf { it > 0 } ?: 0,
+            options.maxOutputHeight.takeIf { it > 0 } ?: 0,
+            2048
+        )
+        val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+        contentResolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, bounds) }
+
+        var sampleSize = 1
+        var w = bounds.outWidth
+        var h = bounds.outHeight
+        while (w / 2 >= maxDim && h / 2 >= maxDim) {
+            sampleSize *= 2
+            w /= 2
+            h /= 2
+        }
+
+        return contentResolver.openInputStream(uri)?.use {
+            BitmapFactory.decodeStream(it, null, BitmapFactory.Options().apply { inSampleSize = sampleSize })
+        }
     }
 
     private fun applyOptions() {

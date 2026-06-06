@@ -1,10 +1,8 @@
 package com.akshayashokcode.imagepicker.model
 
-/**
- * Represents strongly-typed error states that can occur during the MediaKit
- * image picker flow.
- */
-sealed class ImagePickerException(message: String) : Exception(message) {
+import com.akshayashokcode.mediakitcore.exception.MediaKitException
+
+sealed class ImagePickerException(message: String) : MediaKitException(message) {
 
     /**
      * Required runtime permission was denied.

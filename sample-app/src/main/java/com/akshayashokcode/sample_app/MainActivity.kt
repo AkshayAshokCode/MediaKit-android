@@ -1,77 +1,64 @@
 package com.akshayashokcode.sample_app
 
-import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.mutableStateOf
-import com.akshayashokcode.imagecropper.AspectRatio
+import com.akshayashokcode.audiorecorder.entrypoint.AudioRecorder
+import com.akshayashokcode.audiorecorder.model.AudioRecorderOptions
+import com.akshayashokcode.audiorecorder.model.AudioRecorderResult
 import com.akshayashokcode.imagecropper.CropperOptions
 import com.akshayashokcode.imagecropper.MediaKitCropProvider
-import com.akshayashokcode.imagecropper.OutputFormat
 import com.akshayashokcode.imagepicker.entrypoint.ImagePicker
 import com.akshayashokcode.imagepicker.model.ImagePickerResult
 import com.akshayashokcode.imagepicker.model.MediaSource
-import com.akshayashokcode.sample_app.ui.CropperScreen
+import com.akshayashokcode.mediakitcore.ExperimentalMediaKitApi
+import com.akshayashokcode.sample_app.ui.MainScreen
 import com.akshayashokcode.sample_app.ui.theme.AndroidImageCropperTheme
 
 class MainActivity : ComponentActivity() {
+    @OptIn(ExperimentalMediaKitApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Built before setContent so registerForActivityResult fires before onStart.
-        val pickedBitmap = mutableStateOf<android.graphics.Bitmap?>(null)
+        // AudioRecorder and the crop picker require ActivityResultCaller — must be before setContent.
+        // Other picker screens use rememberImagePicker / rememberMediaPicker (no onCreate restriction).
+        val recordingUri = mutableStateOf<Uri?>(null)
+        val recordingDurationMs = mutableStateOf(0L)
+        val croppedUri = mutableStateOf<Uri?>(null)
 
-        val picker = ImagePicker.with(this, this)
-            .source(MediaSource.Gallery)
-            .crop(
-                MediaKitCropProvider(
-                    CropperOptions(
-                        aspectRatios = listOf(
-                            AspectRatio.Free,
-                            AspectRatio.Square,
-                            AspectRatio.FourThree,
-                            AspectRatio.SixteenNine
-                        ),
-                        showRotateButtons = true,
-                        showFlipButtons = true,
-                        outputFormat = OutputFormat.JPEG(quality = 90),
-                        maxOutputWidth = 2048,
-                        maxOutputHeight = 2048
-                    )
-                )
-            )
+        val audioRecorder = AudioRecorder.with(this, this)
+            .options(AudioRecorderOptions(maxDurationSeconds = 120, showWaveform = true))
             .onResult { result ->
-                when (result) {
-                    is ImagePickerResult.Success -> {
-                        pickedBitmap.value = contentResolver
-                            .openInputStream(result.uri)
-                            ?.use { BitmapFactory.decodeStream(it) }
-                    }
-                    is ImagePickerResult.Error -> {
-                        Log.e("MediaKit", "Picker error: ${result.message}")
-                        Toast.makeText(this, result.message, Toast.LENGTH_SHORT).show()
-                    }
-                    else -> Unit
+                if (result is AudioRecorderResult.Success) {
+                    recordingUri.value = result.uri
+                    recordingDurationMs.value = result.durationMs
                 }
             }
-            .onError { error ->
-                Log.e("MediaKit", "Picker exception: ${error.message}")
-                Toast.makeText(this, error.message ?: "Something went wrong", Toast.LENGTH_SHORT).show()
+            .onError { error -> Log.e("MediaKit", "Recorder error: ${error.message}") }
+
+        val cropPicker = ImagePicker.with(this, this)
+            .source(MediaSource.Gallery)
+            .crop(MediaKitCropProvider(CropperOptions(showRotateButtons = true, showFlipButtons = true)))
+            .onResult { result ->
+                if (result is ImagePickerResult.Success) croppedUri.value = result.uri
             }
+            .onError { error -> Log.e("MediaKit", "Crop error: ${error.message}") }
 
         enableEdgeToEdge()
         setContent {
             AndroidImageCropperTheme {
-                CropperScreen(
-                    onPickImage = { picker.launch() },
-                    pickedBitmap = pickedBitmap.value
+                MainScreen(
+                    onLaunchRecorder = { audioRecorder.launch() },
+                    recordingUri = recordingUri.value,
+                    recordingDurationMs = recordingDurationMs.value,
+                    onLaunchCropPicker = { cropPicker.launch() },
+                    croppedUri = croppedUri.value
                 )
             }
         }
     }
 }
-
