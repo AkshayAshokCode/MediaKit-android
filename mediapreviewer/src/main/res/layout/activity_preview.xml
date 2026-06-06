@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FF000000">
@@ -19,7 +20,7 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="Close"
         android:src="@android:drawable/ic_menu_close_clear_cancel"
-        android:tint="#FFFFFFFF" />
+        app:tint="#FFFFFFFF" />
 
     <!-- Share button -->
     <ImageButton
@@ -31,7 +32,7 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="Share"
         android:src="@android:drawable/ic_menu_share"
-        android:tint="#FFFFFFFF"
+        app:tint="#FFFFFFFF"
         android:visibility="gone" />
 
     <!-- Page counter -->
