@@ -98,17 +98,19 @@ internal object VideoTranscoder {
                 setInteger(MediaFormat.KEY_COLOR_FORMAT,
                     MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface)
             }
-            encoder = MediaCodec.createEncoderByType(OUTPUT_MIME).also { enc ->
-                enc.configure(encFmt, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE)
-                encoderSurface = enc.createInputSurface()
-                enc.start()
+            val enc = MediaCodec.createEncoderByType(OUTPUT_MIME).also { e ->
+                e.configure(encFmt, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE)
+                encoderSurface = e.createInputSurface()
+                e.start()
             }
+            encoder = enc
 
             // Build decoder → output to encoder's surface
-            decoder = MediaCodec.createDecoderByType(srcMime).also { dec ->
-                dec.configure(srcFmt, encoderSurface, null, 0)
-                dec.start()
+            val dec = MediaCodec.createDecoderByType(srcMime).also { d ->
+                d.configure(srcFmt, encoderSurface, null, 0)
+                d.start()
             }
+            decoder = dec
 
             // Muxer
             val mx = MediaMuxer(file.absolutePath, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4)
@@ -130,16 +132,16 @@ internal object VideoTranscoder {
 
                 // Feed extractor → decoder
                 if (!inputDone) {
-                    val idx = decoder!!.dequeueInputBuffer(TIMEOUT_US)
+                    val idx = dec.dequeueInputBuffer(TIMEOUT_US)
                     if (idx >= 0) {
-                        val buf = decoder!!.getInputBuffer(idx)!!
+                        val buf = dec.getInputBuffer(idx)!!
                         val n = extractor.readSampleData(buf, 0)
                         if (n < 0) {
-                            decoder!!.queueInputBuffer(idx, 0, 0, 0, MediaCodec.BUFFER_FLAG_END_OF_STREAM)
+                            dec.queueInputBuffer(idx, 0, 0, 0, MediaCodec.BUFFER_FLAG_END_OF_STREAM)
                             inputDone = true
                         } else {
                             val pts = extractor.sampleTime
-                            decoder!!.queueInputBuffer(idx, 0, n, pts, 0)
+                            dec.queueInputBuffer(idx, 0, n, pts, 0)
                             if (totalUs > 0) {
                                 val pct = ((pts.toFloat() / totalUs) * 90).toInt().coerceIn(0, 90)
                                 onProgress?.invoke(pct)
@@ -151,33 +153,33 @@ internal object VideoTranscoder {
 
                 // Drain decoder → surface → encoder (implicit via Surface)
                 if (!decoderDone) {
-                    val dIdx = decoder!!.dequeueOutputBuffer(bufInfo, TIMEOUT_US)
+                    val dIdx = dec.dequeueOutputBuffer(bufInfo, TIMEOUT_US)
                     if (dIdx >= 0) {
                         val render = bufInfo.size != 0
-                        decoder!!.releaseOutputBuffer(dIdx, render) // render=true sends frame to encoder surface
+                        dec.releaseOutputBuffer(dIdx, render)
                         if (bufInfo.flags and MediaCodec.BUFFER_FLAG_END_OF_STREAM != 0) {
-                            encoder!!.signalEndOfInputStream()
+                            enc.signalEndOfInputStream()
                             decoderDone = true
                         }
                     }
                 }
 
                 // Drain encoder → muxer
-                val eIdx = encoder!!.dequeueOutputBuffer(bufInfo, TIMEOUT_US)
+                val eIdx = enc.dequeueOutputBuffer(bufInfo, TIMEOUT_US)
                 when {
                     eIdx == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED -> {
-                        videoMuxerTrack = mx.addTrack(encoder!!.outputFormat)
+                        videoMuxerTrack = mx.addTrack(enc.outputFormat)
                         if (audioFmt != null) audioMuxerTrack = mx.addTrack(audioFmt)
                         mx.start()
                         muxerStarted = true
                     }
                     eIdx >= 0 -> {
-                        val data = encoder!!.getOutputBuffer(eIdx)!!
+                        val data = enc.getOutputBuffer(eIdx)!!
                         val isConfig = bufInfo.flags and MediaCodec.BUFFER_FLAG_CODEC_CONFIG != 0
                         if (muxerStarted && bufInfo.size > 0 && !isConfig) {
                             mx.writeSampleData(videoMuxerTrack, data, bufInfo)
                         }
-                        encoder!!.releaseOutputBuffer(eIdx, false)
+                        enc.releaseOutputBuffer(eIdx, false)
                         if (bufInfo.flags and MediaCodec.BUFFER_FLAG_END_OF_STREAM != 0) {
                             encoderDone = true
                         }
@@ -199,7 +201,7 @@ internal object VideoTranscoder {
                     audioBufInfo.apply {
                         offset = 0; size = n
                         presentationTimeUs = audioExtractor.sampleTime
-                        flags = audioExtractor.sampleFlags
+                        flags = audioExtractor.sampleFlags.toMediaCodecFlags()
                     }
                     mx.writeSampleData(audioMuxerTrack, audioBuf, audioBufInfo)
                     audioExtractor.advance()
@@ -229,4 +231,13 @@ internal object VideoTranscoder {
     }
 
     private fun Int.evenDown() = if (this % 2 == 0) this else this - 1
+}
+
+// MediaExtractor.SAMPLE_FLAG_* and MediaCodec.BUFFER_FLAG_* share the same bit values but
+// lint treats them as different constant sets. Map explicitly to satisfy WrongConstant.
+private fun Int.toMediaCodecFlags(): Int {
+    var flags = 0
+    if (this and MediaExtractor.SAMPLE_FLAG_SYNC != 0) flags = flags or MediaCodec.BUFFER_FLAG_KEY_FRAME
+    if (this and MediaExtractor.SAMPLE_FLAG_PARTIAL_FRAME != 0) flags = flags or MediaCodec.BUFFER_FLAG_PARTIAL_FRAME
+    return flags
 }
